@@ -3,24 +3,46 @@
 <body>
 <h2>User Info</h2>
 <br>
-<form action="saveUser" th:object="${newUser}" method="POST">
-  <input type="hidden" name="id" th:value="${newUser.getId()}" />
+<form action="/admin/saveUser" th:object="${newUser}" method="POST">
+  <input type="hidden" name="id" th:value="${newUser.id}" />
   <input type="hidden" name="_method" value="PUT" />
   <label for="name">Name</label>
-  <input type="text" id="name" name="name" th:value="${newUser.getName()}" />
+  <input type="text" id="name" name="name" th:value="${newUser.name}" />
   <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
   <br><br>
   <label for="surname">Surname</label>
-  <input type="text" id="surname" name="surname" th:value="${newUser.getSurname()}" />
+  <input type="text" id="surname" name="surname" th:value="${newUser.surname}" />
   <div style="color:red" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname Error</div>
   <br><br>
   <label for="department">Department</label>
-  <input type="text" id="department" name="department" th:value="${newUser.getDepartment()}" />
+  <input type="text" id="department" name="department" th:value="${newUser.department}" />
   <div style="color:red" th:if="${#fields.hasErrors('department')}" th:errors="*{department}">Department Error</div>
   <br><br>
   <label for="salary">Salary</label>
-  <input type="text" id="salary" name="salary" th:value="${newUser.getSalary() != 0 ? newUser.getSalary() : ''}" />
+  <input type="text" id="salary" name="salary" th:value="${newUser.salary != 0 ? newUser.salary : ''}" />
   <div style="color:red" th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}">Salary Error</div>
+  <br><br>
+  <label for="username">Username</label>
+  <input type="text" id="username" name="username" th:value="${newUser.username}" />
+  <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</div>
+  <br><br>
+  <label for="password">Password</label>
+  <input type="text" id="password" name="password" th:value="${newUser.password}" />
+  <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
+  <br><br>
+  <label>Roles</label>
+  <div>
+    <div th:each="role : ${allRoles}">
+      <div>
+        <label>
+          <input type="checkbox" th:id="'role-' + ${role.id}" th:name="'roles'" th:value="${role.id}"
+                 th:checked="${newUser != null and newUser.roles != null and newUser.roles.contains(role)}"
+                 th:style="${newUser != null and newUser.roles != null and newUser.roles.contains(role) ? 'color: blue' : ''}" />
+          <span th:text="${role.name}"></span>
+        </label>
+      </div>
+    </div>
+  </div>
   <br><br>
   <input type="submit" value="OK">
 </form>

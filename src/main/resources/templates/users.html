@@ -2,13 +2,15 @@
 <html>
 <body>
 <h2>All Users</h2>
-
 <table>
   <tr>
     <th>Name</th>
     <th>Surname</th>
     <th>Department</th>
     <th>Salary</th>
+    <th>Username</th>
+    <th>Password</th>
+    <th>Roles</th>
     <th>Operations</th>
   </tr>
   <th:block th:each="user : ${users}">
@@ -17,12 +19,19 @@
       <td th:text="${user.getSurname()}"></td>
       <td th:text="${user.getDepartment()}"></td>
       <td th:text="${user.getSalary()}"></td>
+      <td th:text="${user.getUsername()}"></td>
+      <td th:text="${user.getPassword()}"></td>
       <td>
-        <form th:action="@{/updateInfo}" th:url="updateButton" style="display: inline-block;">
+        <th:block th:each="role : ${user.getRoles()}">
+          <span th:text="${role.getName()}"></span>
+        </th:block>
+      </td>
+      <td>
+        <form th:action="@{/admin/updateInfo}" th:url="updateButton" style="display: inline-block;">
           <input type="hidden" name="userId" th:value="${user.getId()}" />
           <input type="submit" class="update-button" value="Update" onclick="window.location.href = '${updateButton}'" />
         </form>
-        <form th:action="@{/deleteUser}" style="display: inline-block;">
+        <form th:action="@{/admin/deleteUser}" style="display: inline-block;">
           <input type="hidden" name="userId" th:value="${user.getId()}"/>
           <input type="submit" class="delete-button" value="Delete" onclick="window.location.href = '${deleteButton}'"/>
         </form>
@@ -30,8 +39,7 @@
     </tr>
   </th:block>
 </table>
-
 <br>
-<input type="button" value="Add" onclick="window.location.href='addNewUser'"/>
+<input type="button" value="Add" onclick="window.location.href='/admin/addNewUser'"/>
 </body>
 </html>
