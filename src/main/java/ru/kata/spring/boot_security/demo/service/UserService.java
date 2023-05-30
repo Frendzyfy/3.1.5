@@ -49,4 +49,10 @@ public class UserService implements UserDetailsService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+    @Transactional
+    public User getUserByUsername(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.get();
+    }
 }

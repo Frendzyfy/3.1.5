@@ -48,6 +48,9 @@ public class User implements UserDetails {
     private int salary;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles;
 
     public User(Long id, String name, String surname, String department, int salary) {
