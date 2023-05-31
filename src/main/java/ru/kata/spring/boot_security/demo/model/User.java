@@ -21,12 +21,10 @@ public class User implements UserDetails {
     private Long id;
 
     @Size(min=2, message = "Не меньше 5 знаков")
+    @Column(unique = true)
     private String username;
     @Size(min=2, message = "Не меньше 5 знаков")
     private String password;
-
-    @Transient
-    private String passwordConfirm;
 
 
     @NotEmpty(message = "Name should not be empty")
@@ -152,14 +150,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
     }
 
     @Override

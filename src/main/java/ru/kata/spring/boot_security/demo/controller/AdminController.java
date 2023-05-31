@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,13 +22,16 @@ import java.util.Set;
 @RequestMapping("/admin")
 public class AdminController {
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
     private RoleRepository roleRepository;
 
     private final UserService userService;
 
     @Autowired
-    public AdminController(UserService userService) {
+    public AdminController(PasswordEncoder passwordEncoder, UserService userService) {
+        this.passwordEncoder = passwordEncoder;
         this.userService = userService;
     }
 
@@ -48,13 +52,20 @@ public class AdminController {
         return "user-info";
     }
     @PostMapping("/saveUser")
-    public String saveUser(@RequestParam("roles") List<Long> roleIds, @ModelAttribute("newUser") @Valid User user, BindingResult bindingResult) {
+    public String saveUser(@RequestParam("roles") List<Long> roleIds, @ModelAttribute("newUser") @Valid User user, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            List<Role> list = roleRepository.findAll();
+            model.addAttribute("allRoles", list);
             return "user-info";
         } else {
             Set<Role> roles = new HashSet<>(roleRepository.findAllById(roleIds));
             user.setRoles(roles);
-            userService.saveUser(user);
+            if (user.getPassword().startsWith("$2a$")) {
+                userService.saveUser(user);
+            } else {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                userService.saveUser(user);
+            }
             return "redirect:/admin";
         }
     }
