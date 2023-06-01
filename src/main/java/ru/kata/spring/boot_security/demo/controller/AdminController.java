@@ -22,7 +22,6 @@ import java.util.Set;
 @RequestMapping("/admin")
 public class AdminController {
 
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -30,8 +29,7 @@ public class AdminController {
     private final UserService userService;
 
     @Autowired
-    public AdminController(PasswordEncoder passwordEncoder, UserService userService) {
-        this.passwordEncoder = passwordEncoder;
+    public AdminController(UserService userService) {
         this.userService = userService;
     }
 
@@ -60,12 +58,7 @@ public class AdminController {
         } else {
             Set<Role> roles = new HashSet<>(roleRepository.findAllById(roleIds));
             user.setRoles(roles);
-            if (user.getPassword().startsWith("$2a$")) {
-                userService.saveUser(user);
-            } else {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-                userService.saveUser(user);
-            }
+            userService.saveUser(user);
             return "redirect:/admin";
         }
     }

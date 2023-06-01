@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
@@ -16,15 +17,18 @@ import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
+
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isEmpty()) {
@@ -40,7 +44,12 @@ public class UserService implements UserDetailsService {
     }
     @Transactional
     public void saveUser(User user) {
-        userRepository.save(user);
+        if (user.getPassword().startsWith("$2a$")) {
+            userRepository.save(user);
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+        }
     }
     @Transactional(readOnly = true)
     public User getUser(Long id) {
@@ -51,9 +60,10 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         return user.get();
     }
+
 }
