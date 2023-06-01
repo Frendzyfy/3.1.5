@@ -15,6 +15,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -45,12 +46,15 @@ public class AdminController {
     public String addNewUser(Model model) {
         User user = new User();
         List<Role> list = roleRepository.findAll();
-        model.addAttribute("newUser", user);        model.addAttribute("allRoles", list);
+        model.addAttribute("newUser", user);
         model.addAttribute("allRoles", list);
         return "user-info";
     }
     @PostMapping("/saveUser")
     public String saveUser(@RequestParam("roles") List<Long> roleIds, @ModelAttribute("newUser") @Valid User user, BindingResult bindingResult, Model model) {
+        Optional<User> optionalUser = userService.getUserByUsername(user.getUsername());
+        if(!optionalUser.isEmpty())
+            bindingResult.rejectValue("username", "error.username", "User with the same username already exists");
         if (bindingResult.hasErrors()) {
             List<Role> list = roleRepository.findAll();
             model.addAttribute("allRoles", list);

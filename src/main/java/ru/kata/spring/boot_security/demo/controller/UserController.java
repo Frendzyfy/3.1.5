@@ -10,6 +10,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -20,9 +21,8 @@ public class UserController {
 
     @GetMapping("/user")
     public String showUser(Principal principal, Model model) {
-        User user = userService.getUserByUsername(principal.getName());
+        User user = userService.getUserByUsername(principal.getName()).get();
         model.addAttribute("userinfo", user);
-
         return "user";
     }
 }
