@@ -12,6 +12,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
@@ -51,9 +52,10 @@ public class AdminController {
         return "user-info";
     }
     @PostMapping("/saveUser")
-    public String saveUser(@RequestParam("roles") List<Long> roleIds, @ModelAttribute("newUser") @Valid User user, BindingResult bindingResult, Model model) {
+    public String saveUser(@RequestParam("roles") List<Long> roleIds, @ModelAttribute("newUser") @Valid User user, BindingResult bindingResult, Model model, HttpServletRequest request) {
         Optional<User> optionalUser = userService.getUserByUsername(user.getUsername());
-        if(!optionalUser.isEmpty())
+//        if (!optionalUser.isEmpty() & request.getRequestURI().equals("/addNewUser") || !optionalUser.isEmpty() & optionalUser.get() != user.getUsername() &)
+        if (!optionalUser.isEmpty() && optionalUser.get().getId() != user.getId())
             bindingResult.rejectValue("username", "error.username", "User with the same username already exists");
         if (bindingResult.hasErrors()) {
             List<Role> list = roleRepository.findAll();
