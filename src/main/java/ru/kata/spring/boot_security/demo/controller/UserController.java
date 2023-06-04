@@ -14,10 +14,11 @@ import java.util.Optional;
 
 @Controller
 public class UserController {
-
+    final UserService userService;
     @Autowired
-    UserService userService;
-
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/user")
     public String getUserInfo(Principal principal, Model model) {

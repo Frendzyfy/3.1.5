@@ -1,12 +1,16 @@
 package ru.kata.spring.boot_security.demo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Objects;
@@ -14,13 +18,18 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class User implements UserDetails {
+    @JsonIgnore
+    private HibernateProxy hibernateProxy;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @Size(min=2, message = "Не меньше 5 знаков")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я]+$", message = "Логин не должен содержать цифры, пробелы, спецсимволы")
     @Column(unique = true)
     private String username;
     @Size(min=2, message = "Не меньше 5 знаков")
@@ -28,11 +37,13 @@ public class User implements UserDetails {
 
 
     @NotEmpty(message = "Name should not be empty")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я]+$", message = "Имя не должно содержать цифры, пробелы, спецсимволы")
     @Size(min = 2, max = 15, message = "Name should be between 2 and 15 characters")
     @Column(name="name")
     private String name;
 
     @NotEmpty(message = "Surname should not be empty")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я]+$", message = "Фамилия не должно содержать цифры, пробелы, спецсимволы")
     @Size(min = 2, max = 25, message = "Surname should be between 2 and 25 characters")
     @Column(name="surname")
     private String surname;
