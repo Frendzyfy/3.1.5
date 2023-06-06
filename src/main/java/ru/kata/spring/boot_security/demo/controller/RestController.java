@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 @org.springframework.web.bind.annotation.RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/admin")
 public class RestController {
 
     private final UserService userService;
@@ -30,9 +30,9 @@ public class RestController {
         this.userService = userService;
     }
 
-    @GetMapping()
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/roles")
@@ -42,12 +42,11 @@ public class RestController {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/users/{id}")
     public User getUser(@PathVariable("id") Long id) {
         return userService.getUser(id);
     }
-
-    @PostMapping()
+    @PostMapping("/users")
     public ResponseEntity<HttpStatus> addUser(@RequestBody @Valid User user, BindingResult bindingResult) {
         if (userService.getUserByUsername(user.getUsername()).isPresent()) {
             bindingResult.rejectValue("username", "error.username", "Username already exists");
@@ -68,8 +67,11 @@ public class RestController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @PatchMapping()
+    @PatchMapping("/users")
     public ResponseEntity<HttpStatus> editUser(@RequestBody @Valid User user, BindingResult bindingResult) {
+        if (userService.getUserByUsername(user.getUsername()).isPresent()) {
+            bindingResult.rejectValue("username", "error.username", "Username already exists");
+        }
         if (bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
 
@@ -85,7 +87,7 @@ public class RestController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/users/{id}")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok(HttpStatus.OK);

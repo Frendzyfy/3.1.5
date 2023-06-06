@@ -15,14 +15,10 @@
 <nav class="navbar bg-body-tertiary" data-bs-theme="dark">
   <div class="container-fluid">
     <span class="navbar-brand mb-0 fs-6">
-      <span class="username" th:text="${userForHeader.name}"></span>
-        <span class="surname" th:text="${userForHeader.surname}"></span>
+      <span class="username"></span>
+      <span class="surname"></span>
       <span>с ролями:</span>
-      <span th:each="role, iterStat : ${userForHeader.roles}">
-            <span class="role"
-                  th:text="${role.name == 'ROLE_ADMIN' ? 'ADMIN' : (role.name == 'ROLE_USER' ? 'USER' : '')}"></span>
-            <span th:if="${!iterStat.last}" class="role-separator"></span>
-        </span>
+      <span class="role"></span>
     </span>
     <a class="navbar-brand fs-6 text-secondary" href="/logout">Logout</a>
   </div>

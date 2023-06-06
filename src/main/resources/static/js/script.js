@@ -1,5 +1,66 @@
-let URL = "http://localhost:8080/api/admin";
-const roleUrl = 'http://localhost:8080/api/admin/roles';
+let URL = "http://localhost:8080/admin/users";
+const roleUrl = 'http://localhost:8080/admin/roles';
+const authUserUrl = 'http://localhost:8080/userInfo'
+
+$(document).ready(function() {
+    $.ajax({
+        url: authUserUrl,
+        type: 'GET',
+        success: function(user) {
+            $('.username').text(user.name);
+            $('.surname').text(user.surname);
+            let roles = user.roles.map(function (role) {
+                return role.name === 'ROLE_ADMIN' ? 'ADMIN' : 'USER';
+            });
+            $('.role').text(roles.join(' '));
+        },
+        error: function() {
+            console.log('Error getting current user');
+        }
+    });
+});
+
+$(document).ready(function() {
+    $.ajax({
+        url: authUserUrl,
+        type: 'GET',
+        success: function(user) {
+            $('.id').text(user.id);
+            $('.name').text(user.name);
+            $('.surname').text(user.surname);
+            $('.department').text(user.department);
+            let roles = user.roles.map(function(role) {
+                return role.name === 'ROLE_ADMIN' ? 'ADMIN' : 'USER';
+            });
+            $('.roles').text(roles.join(', '));
+        },
+        error: function() {
+            console.log('Error getting current user');
+        }
+    });
+});
+
+$(document).ready(function() {
+    $.ajax({
+        url: authUserUrl,
+        type: 'GET',
+        success: function(user) {
+            let isAdmin = user.roles.some(function(role) {
+                return role.name === 'ROLE_ADMIN';
+            });
+            console.log(isAdmin); // отладочный вывод
+            if (isAdmin) {
+                $('#adminMenuItem').show();
+            } else {
+                $('#adminMenuItem').hide();
+            }
+        },
+        error: function() {
+            console.log('Error getting current user');
+        }
+    });
+});
+
 
 
 
@@ -39,8 +100,10 @@ const renderTable = (users) => {
         });
     });
 
-    let tableContent = ''; // Создаем пустую строку
+    let tableContent = '';
+    // Создаем пустую строку
     outputUser.forEach(user => {
+        let password = user.password.substring(0, 10); // или password = user.password.slice(0, 10);
         tableContent += `
             <tr>
                 <td><span>${user.id}</span></td>
@@ -49,7 +112,7 @@ const renderTable = (users) => {
                 <td><span>${user.department}</span></td>
                 <td><span>${user.salary}</span></td>
                 <td><span>${user.username}</span></td>
-                <td><span>${user.password}</span></td>
+                <td><span>${password}</span></td>
                 <td><span>${user.roles}</span></td>
                 <th>
                     <button data-id="${user.id}" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal" id="editbtn">Edit</button>
@@ -168,7 +231,6 @@ modalFormEdit.submit(function(e) {
         }
     });
 });
-
 
 
 

@@ -1,33 +1,28 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.Optional;
 
-@Controller
+@RestController
 public class UserController {
-    final UserService userService;
+
+    private final UserService userService;
+
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping("/user")
-    public String getUserInfo(Principal principal, Model model) {
-        String username = principal.getName();
-        User user = userService.getUserByUsername(username).get();
-
-        model.addAttribute("userForHeader", user);
-        model.addAttribute("user", user);
-
-        return "user";
+    @GetMapping("/userInfo")
+    public ResponseEntity<User> showUser(Principal principal) {
+        User user = userService.getUserByUsername(principal.getName()).get();
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

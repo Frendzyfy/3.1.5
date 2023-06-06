@@ -14,14 +14,10 @@
 <nav class="navbar bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid">
     <span class="navbar-brand mb-0 fs-6">
-      <span class="username" th:text="${userForHeader.name}"></span>
-        <span class="surname" th:text="${userForHeader.surname}"></span>
+      <span class="username"></span>
+      <span class="surname"></span>
       <span>с ролями:</span>
-      <span th:each="role, iterStat : ${userForHeader.roles}">
-            <span class="role"
-                  th:text="${role.name == 'ROLE_ADMIN' ? 'ADMIN' : (role.name == 'ROLE_USER' ? 'USER' : '')}"></span>
-            <span th:if="${!iterStat.last}" class="role-separator"></span>
-        </span>
+      <span class="role"></span>
     </span>
         <a class="navbar-brand fs-6 text-secondary" href="/logout">Logout</a>
     </div>
@@ -36,8 +32,7 @@
                     <div class="menu-container">
                         <nav>
                             <ul class="nav nav-pills flex-column">
-                                <li id="adminMenuItem" class="nav-item rounded d-block" th:if="${#lists.contains(user.roles.![name], 'ROLE_ADMIN')}"
-                                    th:class="${#request.getRequestURI().contains('/admin') ? 'nav-item active' : 'nav-item'}">
+                                <li id="adminMenuItem" class="nav-item rounded d-block" style="display:none !important;">
                                     <a class="nav-link" href="/admin">Admin</a>
                                 </li>
                                 <li id="userMenuItem" class="nav-item rounded d-block">
@@ -71,15 +66,11 @@
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td th:text="${user.id}"></td>
-                                        <td th:text="${user.name}"></td>
-                                        <td th:text="${user.surname}"></td>
-                                        <td th:text="${user.department}"></td>
-                                        <td>
-                                            <div th:each="role : ${user.roles}">
-                                                <p th:text="${role.name.toString()}"></p>
-                                            </div>
-                                        </td>
+                                        <td class="id"></td>
+                                        <td class="name"></td>
+                                        <td class="surname"></td>
+                                        <td class="department"></td>
+                                        <td class="roles"></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -101,7 +92,6 @@
 
 <script src="webjars/jquery/3.3.1/jquery.min.js"></script>
 <script src="/static/js/script.js"></script>
-<script src="/static/js/userPage.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
         crossorigin="anonymous"></script>
